@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quebra-Cabeça Deslizante</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    #puzzle-container {
+      width: 300px;
+      height: 300px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+    }
+
+    .puzzle-piece {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      font-weight: bold;
+      cursor: pointer;
+      border: 1px solid #ccc;
+      background-color: #fff;
+    }
+  </style>
+</head>
+<body>
+
+<div id="puzzle-container"></div>
+
+<script>
+  const puzzleContainer = document.getElementById('puzzle-container');
+  const size = 3; // tamanho do quebra-cabeça (3x3 neste caso)
+  const totalPieces = size * size;
+  let puzzlePieces = [];
+
+  // Inicializa o quebra-cabeça
+  function initPuzzle() {
+    for (let i = 1; i < totalPieces; i++) {
+      const piece = document.createElement('div');
+      piece.className = 'puzzle-piece';
+      piece.textContent = i;
+      piece.addEventListener('click', () => movePiece(i));
+      puzzlePieces.push(piece);
+      puzzleContainer.appendChild(piece);
+    }
+
+    // Adiciona uma peça vazia no final
+    const emptyPiece = document.createElement('div');
+    emptyPiece.className = 'puzzle-piece';
+    emptyPiece.textContent = '';
+    puzzlePieces.push(emptyPiece);
+    puzzleContainer.appendChild(emptyPiece);
+
+    shufflePuzzle();
+  }
+
+  // Embaralha as peças do quebra-cabeça
+  function shufflePuzzle() {
+    for (let i = totalPieces - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [puzzlePieces[i].textContent, puzzlePieces[j].textContent] = [puzzlePieces[j].textContent, puzzlePieces[i].textContent];
+    }
+  }
+
+  // Move a peça para a posição vazia, se possível
+  function movePiece(index) {
+    const emptyIndex = puzzlePieces.findIndex(piece => piece.textContent === '');
+    const currentIndex = puzzlePieces.findIndex(piece => piece.textContent == index.toString());
+
+    if (isValidMove(currentIndex, emptyIndex)) {
+      [puzzlePieces[currentIndex].textContent, puzzlePieces[emptyIndex].textContent] = [puzzlePieces[emptyIndex].textContent, puzzlePieces[currentIndex].textContent];
+      checkWin();
+    }
+  }
+
+  // Verifica se o movimento é válido
+  function isValidMove(currentIndex, emptyIndex) {
+    const currentRow = Math.floor(currentIndex / size);
+    const currentCol = currentIndex % size;
+    const emptyRow = Math.floor(emptyIndex / size);
+    const emptyCol = emptyIndex % size;
+
+    // Verifica se a peça a ser movida está ao lado da peça vazia (em cima, embaixo, esquerda ou direita)
+    return (
+      (currentRow === emptyRow && Math.abs(currentCol - emptyCol) === 1) ||
+      (currentCol === emptyCol && Math.abs(currentRow - emptyRow) === 1)
+    );
+  }
+
+  // Verifica se o jogador ganhou o jogo
+  function checkWin() {
+    const isWin = puzzlePieces.every((piece, index) => piece.textContent === (index + 1).toString() || piece.textContent === '');
+    if (isWin) {
+      alert('Parabéns! Você ganhou!');
+      shufflePuzzle(); // Embaralha novamente para o próximo jogo
+    }
+  }
+
+  // Inicializa o quebra-cabeça ao carregar a página
+  window.onload = initPuzzle;
+</script>
+
+</body>
+</html>
+<a href="Zoask3.html"
